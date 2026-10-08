@@ -1,22 +1,35 @@
 
-import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/react'
+import { Route, Routes } from 'react-router-dom'
+import HomePage from './pages/home/HomePage'
+import ChatPage from './pages/chat/ChatPage'
+import AlbumPage from './pages/album/AlbumPage'
+import NotFoundPage from './pages/404/NotFoundPage'
+import AuthCallbackPage from './pages/auth-callback/AuthCallbackPage'
+import MainLayout from './layout/MainLayout'
+import { Toaster } from 'react-hot-toast'
+import AdminPage from './pages/admin/AdminPage'
+import { AuthenticateWithRedirectCallback } from '@clerk/react'
 
 function App() {
   return (
     <>
-      <header>
-        <Show when="signed-out">
-          <SignInButton mode="modal"/>
-          <SignUpButton mode="modal"/>
-        </Show>
-        <Show when="signed-in">
-          <UserButton />
-        </Show>
-      </header>
-      <div>
-        <h1 className='text-red-300'>streamNote</h1>
-      </div>
-    </>
+			<Routes>
+				<Route
+					path='/sso-callback'
+					element={<AuthenticateWithRedirectCallback signUpForceRedirectUrl={"/auth-callback"} />}
+				/>
+				<Route path='/auth-callback' element={<AuthCallbackPage />} />
+				<Route path='/admin' element={<AdminPage />} />
+
+				<Route element={<MainLayout />}>
+					<Route path='/' element={<HomePage />} />
+					<Route path='/chat' element={<ChatPage />} />
+					<Route path='/albums/:albumId' element={<AlbumPage />} />
+					<Route path='*' element={<NotFoundPage />} />
+				</Route>
+			</Routes>
+			<Toaster />
+		</>
   )
 }
 
